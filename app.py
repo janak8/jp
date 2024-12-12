@@ -26,20 +26,27 @@ CLASS_NAMES = [
     'Tomato-mosaic_virus'
 ]
 
-# Add custom CSS for gradient background and footer
+# Add custom CSS for vibrant gradient background, title, and footer
 st.markdown(
     """
     <style>
     .stApp {
-        background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+        background: linear-gradient(45deg, #ff7eb3, #ff758c, #ff6a5e, #ff4500);
         background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
+        animation: gradientBG 10s ease infinite;
     }
 
     @keyframes gradientBG {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
+    }
+
+    header .stTitle {
+        font-size: 3rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        color: #fff;
     }
 
     footer {
