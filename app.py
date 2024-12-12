@@ -26,6 +26,47 @@ CLASS_NAMES = [
     'Tomato-mosaic_virus'
 ]
 
+# Add custom CSS for gradient background and footer
+st.markdown(
+    """
+    <style>
+    body {
+        background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    footer {
+        visibility: hidden;
+    }
+
+    .footer-content {
+        visibility: visible;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+    </style>
+
+    <div class="footer-content">
+        <p>Developed by Janak Adhikari</p>
+        <p>Trusted by Farmers, Agro-Techs, and Colleges</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Set title of the app
 st.title("Tomato Leaf Disease Detection")
 st.markdown("Upload an image of the plant leaf to detect its disease.")
