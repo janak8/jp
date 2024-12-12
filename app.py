@@ -5,17 +5,19 @@ import cv2
 from keras.models import load_model
 import tensorflow as tf
 
-# Load the model
-try:
-    model = load_model('CNNModel.h5', compile=False)
-    model.compile(
-        optimizer='adam',
-        loss=tf.keras.losses.CategoricalCrossentropy(reduction='sum_over_batch_size'),  # Corrected reduction
-        metrics=['accuracy']
-    )
-except Exception as e:
-    st.error(f"Error loading model: {e}")
-    st.stop()
+# Define a function to load and compile the model
+def load_and_compile_model():
+    try:
+        model = load_model('CNNModel.h5', compile=False)
+        model.compile(
+            optimizer='adam',
+            loss=tf.keras.losses.CategoricalCrossentropy(reduction='sum_over_batch_size'),  # Corrected reduction
+            metrics=['accuracy']
+        )
+        return model
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        st.stop()
 
 # Define class names
 CLASS_NAMES = [
@@ -84,6 +86,9 @@ plant_image = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"]
 # Predict disease when the user uploads an image
 if plant_image:
     try:
+        # Reload the model every time for fresh predictions
+        model = load_and_compile_model()
+
         # Convert the file to a NumPy array and decode it using OpenCV
         file_bytes = np.asarray(bytearray(plant_image.read()), dtype=np.uint8)
         opencv_image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
