@@ -30,7 +30,7 @@ CLASS_NAMES = [
 st.markdown(
     """
     <style>
-    body {
+    .stApp {
         background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
         background-size: 400% 400%;
         animation: gradientBG 15s ease infinite;
