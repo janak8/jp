@@ -1,6 +1,6 @@
-keras==3.7.0
-numpy==1.23.5
-streamlit==1.22.0
-tensorflow==2.18.0
-opencv-python==4.6.0.66
-opencv-python-headless==4.8.1.78
+keras
+numpy
+streamlit
+tensorflow
+opencv-python
+opencv-python-headless
