@@ -54,27 +54,69 @@ def predict_disease(model, image_path):
     elif pred == 9:
         return "Tomato - Spider Mite Disease", 'Tomato-Spider_Mite.html'
 
-# Add custom CSS for vibrant gradient background, title, and footer
+# Add custom CSS for leaf design and animation
 st.markdown(
     """
     <style>
+    /* Background style */
     .stApp {
-        background: linear-gradient(45deg, #ff7eb3, #ff758c, #ff6a5e, #ff4500);
-        background-size: 400% 400%;
-        animation: gradientBG 10s ease infinite;
+        background-color: #e0f7fa;
+        overflow: hidden;
+        position: relative;
     }
 
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    /* Leaf animation keyframe */
+    @keyframes float {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-15px) rotate(5deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
     }
 
+    /* Styling the leaf shape */
+    .leaf {
+        width: 100px;
+        height: 200px;
+        background: linear-gradient(135deg, #4caf50, #81c784);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: center;
+        border-radius: 50% 50% 0 0;
+        animation: float 4s ease-in-out infinite;
+        box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+
+    /* Adding veins for realism */
+    .leaf:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 4px;
+        height: 60%;
+        background-color: #388e3c;
+        transform: translateX(-50%);
+    }
+
+    /* Adding another vein for realism */
+    .leaf:after {
+        content: '';
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        width: 4px;
+        height: 50%;
+        background-color: #388e3c;
+        transform: translateX(-50%) rotate(45deg);
+    }
+
+    /* Title and footer styles */
     header .stTitle {
         font-size: 3rem;
         font-weight: bold;
         text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-        color: #fff;
+        color: #333;
     }
 
     footer {
@@ -93,13 +135,14 @@ st.markdown(
         padding: 10px;
     }
     </style>
+    """, unsafe_allow_html=True
+)
 
-    <div class="footer-content">
-        <p>Developed by Janak Adhikari</p>
-        <p>Trusted by Farmers, Agro-Techs, and Colleges</p>
-    </div>
-    """,
-    unsafe_allow_html=True
+# Display the floating leaf in the center of the screen
+st.markdown(
+    """
+    <div class="leaf"></div>
+    """, unsafe_allow_html=True
 )
 
 # Set title of the app
