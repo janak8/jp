@@ -8,7 +8,7 @@ import tensorflow as tf
 # Define a function to load and compile the model
 def load_and_compile_model():
     try:
-        model = load_model('/models/mymodel.h5', compile=False)
+        model = load_model('models/mymodel.h5', compile=False)
         model.compile(
             optimizer='adam',
             loss=tf.keras.losses.CategoricalCrossentropy(reduction='sum_over_batch_size'),  # Corrected reduction
