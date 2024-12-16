@@ -1,7 +1,6 @@
 import numpy as np
 import streamlit as st
 import cv2
-import os
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.models import load_model
 
@@ -25,9 +24,9 @@ def load_and_compile_model():
 # Function to predict disease based on model output
 def predict_disease(model, image_path):
     # Load and preprocess the image
-    test_image = load_img(image_path, target_size=(128, 128))  # Resize image
-    test_image = img_to_array(test_image) / 255.0  # Normalize image
-    test_image = np.expand_dims(test_image, axis=0)  # Expand dimensions for batch
+    test_image = load_img(image_path, target_size=(128, 128))  # Resize image to (128, 128) based on model's expected input
+    test_image = img_to_array(test_image) / 255.0  # Normalize image as during training
+    test_image = np.expand_dims(test_image, axis=0)  # Expand dimensions for batch input
 
     # Make prediction
     result = model.predict(test_image)
