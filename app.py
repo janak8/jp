@@ -1,17 +1,20 @@
-# Library imports
 import numpy as np
 import streamlit as st
 import cv2
-from keras.models import load_model
-import tensorflow as tf
+import os
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.models import load_model
 
-# Define a function to load and compile the model
+# Path to the model
+model_path = 'models/mymodel.h5'
+
+# Load the model
 def load_and_compile_model():
     try:
-        model = load_model('modeld.h5', compile=False)
+        model = load_model(model_path)
         model.compile(
             optimizer='adam',
-            loss=tf.keras.losses.CategoricalCrossentropy(reduction='sum_over_batch_size'),  # Corrected reduction
+            loss='categorical_crossentropy',
             metrics=['accuracy']
         )
         return model
@@ -19,14 +22,38 @@ def load_and_compile_model():
         st.error(f"Error loading model: {e}")
         st.stop()
 
-# Define class names (used for processing model prediction)
-CLASS_NAMES = [
-    'Tomato-Early_Bright', 'Tomato-Healthy', 'Tomato-Late_bright',
-    'Tomato-Leaf_Mold', 'Tomato-Septoria_LeafSpot',
-    'Tomato-Spider_Mites', 'Tomato-Target_Spot',
-    'Tomato-YellowLeaf-CurlVirus', 'Tomato-Bacterial_spot',
-    'Tomato-mosaic_virus'
-]
+# Function to predict disease based on model output
+def predict_disease(model, image_path):
+    # Load and preprocess the image
+    test_image = load_img(image_path, target_size=(128, 128))  # Resize image
+    test_image = img_to_array(test_image) / 255.0  # Normalize image
+    test_image = np.expand_dims(test_image, axis=0)  # Expand dimensions for batch
+
+    # Make prediction
+    result = model.predict(test_image)
+    pred = np.argmax(result, axis=1)  # Get the predicted class
+
+    # Conditional statements based on prediction
+    if pred == 0:
+        return "Tomato - Bacterial Spot Disease", 'Tomato-Bacterial_Spot.html'
+    elif pred == 1:
+        return "Tomato - Early Blight Disease", 'Tomato-Early_Blight.html'
+    elif pred == 2:
+        return "Tomato - Healthy and Fresh", 'Tomato-Healthy.html'
+    elif pred == 3:
+        return "Tomato - Late Blight Disease", 'Tomato-Late_Blight.html'
+    elif pred == 4:
+        return "Tomato - Leaf Mold Disease", 'Tomato-Leaf_Mold.html'
+    elif pred == 5:
+        return "Tomato - Septoria Leaf Spot Disease", 'Tomato-Septoria_Leaf_Spot.html'
+    elif pred == 6:
+        return "Tomato - Target Spot Disease", 'Tomato-Target_Spot.html'
+    elif pred == 7:
+        return "Tomato - Yellow Leaf Curl Virus Disease", 'Tomato-Yellow_Leaf_Curl_Virus.html'
+    elif pred == 8:
+        return "Tomato - Mosaic Virus Disease", 'Tomato-Mosaic_Virus.html'
+    elif pred == 9:
+        return "Tomato - Spider Mite Disease", 'Tomato-Spider_Mite.html'
 
 # Add custom CSS for vibrant gradient background, title, and footer
 st.markdown(
@@ -97,40 +124,17 @@ if plant_image:
             # Display the uploaded image
             st.image(opencv_image, channels="BGR", caption="Uploaded Image")
 
-            # Resize the image to the required dimensions (e.g., 120x240)
-            resized_image = cv2.resize(opencv_image, (240, 120))  # Adjust based on your model's expected size
+            # Save the image to a temporary file to use for prediction
+            temp_image_path = "temp_image.jpg"
+            cv2.imwrite(temp_image_path, opencv_image)
 
-            # Expand dimensions to match the model's input shape
-            input_image = np.expand_dims(resized_image, axis=0)
+            # Make prediction using the model
+            pred, output_page = predict_disease(model, temp_image_path)
 
-            # Normalize the image
-            input_image = input_image / 255.0
+            # Display the prediction
+            st.success(f"This is a {pred}.")
+            st.markdown(f"Learn more about this disease: [Click here](static/{output_page})")
 
-            # Make prediction
-            Y_pred = model.predict(input_image)
-            pred = np.argmax(Y_pred, axis=1)
-
-            # Conditional disease detection based on prediction
-            if pred == 0:
-                st.success("This is a Tomato leaf with Bacterial Spot Disease.")
-            elif pred == 1:
-                st.success("This is a Tomato leaf with Early Blight Disease.")
-            elif pred == 2:
-                st.success("This is a Healthy and Fresh Tomato leaf.")
-            elif pred == 3:
-                st.success("This is a Tomato leaf with Late Blight Disease.")
-            elif pred == 4:
-                st.success("This is a Tomato leaf with Leaf Mold Disease.")
-            elif pred == 5:
-                st.success("This is a Tomato leaf with Septoria Leaf Spot Disease.")
-            elif pred == 6:
-                st.success("This is a Tomato leaf with Target Spot Disease.")
-            elif pred == 7:
-                st.success("This is a Tomato leaf with Yellow Leaf Curl Virus Disease.")
-            elif pred == 8:
-                st.success("This is a Tomato leaf with Mosaic Virus Disease.")
-            elif pred == 9:
-                st.success("This is a Tomato leaf with Two-Spotted Spider Mite Disease.")
         else:
             st.error("Error processing the uploaded image. Please upload a valid image.")
 
