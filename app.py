@@ -8,7 +8,7 @@ import tensorflow as tf
 # Define a function to load and compile the model
 def load_and_compile_model():
     try:
-        model = load_model('models/mymodel.h5', compile=False)
+        model = load_model('modeld.h5', compile=False)
         model.compile(
             optimizer='adam',
             loss=tf.keras.losses.CategoricalCrossentropy(reduction='sum_over_batch_size'),  # Corrected reduction
@@ -19,7 +19,7 @@ def load_and_compile_model():
         st.error(f"Error loading model: {e}")
         st.stop()
 
-# Define class names
+# Define class names (used for processing model prediction)
 CLASS_NAMES = [
     'Tomato-Early_Bright', 'Tomato-Healthy', 'Tomato-Late_bright',
     'Tomato-Leaf_Mold', 'Tomato-Septoria_LeafSpot',
@@ -97,8 +97,8 @@ if plant_image:
             # Display the uploaded image
             st.image(opencv_image, channels="BGR", caption="Uploaded Image")
 
-            # Resize the image to the required dimensions (224x224)
-            resized_image = cv2.resize(opencv_image, (224, 224))
+            # Resize the image to the required dimensions (e.g., 120x240)
+            resized_image = cv2.resize(opencv_image, (240, 120))  # Adjust based on your model's expected size
 
             # Expand dimensions to match the model's input shape
             input_image = np.expand_dims(resized_image, axis=0)
@@ -108,11 +108,29 @@ if plant_image:
 
             # Make prediction
             Y_pred = model.predict(input_image)
-            result = CLASS_NAMES[np.argmax(Y_pred)]
+            pred = np.argmax(Y_pred, axis=1)
 
-            # Display the prediction
-            disease, condition = result.split('-')
-            st.success(f"This is a {disease} leaf with {condition}.")
+            # Conditional disease detection based on prediction
+            if pred == 0:
+                st.success("This is a Tomato leaf with Bacterial Spot Disease.")
+            elif pred == 1:
+                st.success("This is a Tomato leaf with Early Blight Disease.")
+            elif pred == 2:
+                st.success("This is a Healthy and Fresh Tomato leaf.")
+            elif pred == 3:
+                st.success("This is a Tomato leaf with Late Blight Disease.")
+            elif pred == 4:
+                st.success("This is a Tomato leaf with Leaf Mold Disease.")
+            elif pred == 5:
+                st.success("This is a Tomato leaf with Septoria Leaf Spot Disease.")
+            elif pred == 6:
+                st.success("This is a Tomato leaf with Target Spot Disease.")
+            elif pred == 7:
+                st.success("This is a Tomato leaf with Yellow Leaf Curl Virus Disease.")
+            elif pred == 8:
+                st.success("This is a Tomato leaf with Mosaic Virus Disease.")
+            elif pred == 9:
+                st.success("This is a Tomato leaf with Two-Spotted Spider Mite Disease.")
         else:
             st.error("Error processing the uploaded image. Please upload a valid image.")
 
